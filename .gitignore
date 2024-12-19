@@ -3,6 +3,12 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# Exclude big files
+data/chest_xray/test
+data/chest_xray/train
+data/chest_xray/val
+model/
+
 # C extensions
 *.so
 

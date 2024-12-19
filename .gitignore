@@ -7,7 +7,7 @@ __pycache__/
 data/chest_xray/test
 data/chest_xray/train
 data/chest_xray/val
-model/
+model/*.pth
 
 # C extensions
 *.so

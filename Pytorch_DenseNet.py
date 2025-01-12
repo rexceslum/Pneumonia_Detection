@@ -23,7 +23,7 @@ val_dir = './data/chest_xray/val/'
 train_dataset = torchvision.datasets.ImageFolder(
         root=train_dir,
         transform=transforms.Compose([
-                      transforms.Resize((180,180)),
+                      transforms.Resize((200,200)),
                       transforms.RandomHorizontalFlip(),
                       transforms.RandomRotation(20),
                       transforms.ToTensor(),
@@ -33,7 +33,7 @@ train_dataset = torchvision.datasets.ImageFolder(
 test_dataset = torchvision.datasets.ImageFolder(
         root=test_dir,
         transform=transforms.Compose([
-                      transforms.Resize((180,180)),
+                      transforms.Resize((200,200)),
                       transforms.ToTensor(),
                       transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
         ])
@@ -41,7 +41,7 @@ test_dataset = torchvision.datasets.ImageFolder(
 val_dataset = torchvision.datasets.ImageFolder(
         root=val_dir,
         transform=transforms.Compose([
-                      transforms.Resize((180,180)),
+                      transforms.Resize((200,200)),
                       transforms.ToTensor(),
                       transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
         ])
@@ -50,17 +50,17 @@ print(train_dataset.class_to_idx)
 
 train_loader = torch.utils.data.DataLoader(
     train_dataset,
-    batch_size=64,
+    batch_size=32,
     shuffle=True
 )
 test_loader = torch.utils.data.DataLoader(
     test_dataset,
-    batch_size=64,
+    batch_size=32,
     shuffle=True
 )
 val_loader = torch.utils.data.DataLoader(
     val_dataset,
-    batch_size=64,
+    batch_size=8,
     shuffle=True
 )
 images, labels = next(iter(train_loader))
@@ -72,17 +72,17 @@ print(labels.shape)
 class CNNModel(nn.Module):
     def __init__(self):
         super(CNNModel, self).__init__()
-        self.vgg16 = models.vgg16(weights=models.VGG16_Weights.IMAGENET1K_V1)
+        self.densenet = models.densenet121(weights=models.DenseNet121_Weights.IMAGENET1K_V1)  # Using DenseNet121
 
-        # Replace output layer according to our problem
-        in_feats = self.vgg16.classifier[6].in_features 
-        self.vgg16.classifier[6] = nn.Linear(in_feats, 2)
+        # Replace the classifier layer according to our problem
+        in_feats = self.densenet.classifier.in_features
+        self.densenet.classifier = nn.Linear(in_feats, 2)
 
     def forward(self, x):
-        x = self.vgg16(x)
+        x = self.densenet(x)
         return x
 
-model_save_path = "./model/pytorch_vgg16_model.pth"
+model_save_path = "./model/pytorch_densenet121_model.pth"
 model = CNNModel()
 if os.path.exists(model_save_path):
     model.load_state_dict(torch.load(model_save_path))
@@ -95,8 +95,8 @@ print(model)
 
 # %% Train
 criterion = nn.CrossEntropyLoss()
-optimizer = optim.Adam(model.parameters(), lr=0.00001)
-epochs = 10
+optimizer = optim.Adam(model.parameters(), lr=0.0001)
+epochs = 20
 training_losses = []
 validation_losses = []
 training_accuracy = []
@@ -136,6 +136,7 @@ if not os.path.exists(model_save_path):
         train_accuracy = 100 * correct_train / total_train
         training_accuracy.append(train_accuracy)
         print(f"Epoch {i+1}/{epochs} - Training Loss: {avg_train_loss}, Training Accuracy: {train_accuracy}")
+        torch.cuda.empty_cache()
         
         # Validation loop
         model.eval()
@@ -158,6 +159,7 @@ if not os.path.exists(model_save_path):
         val_accuracy = 100 * correct_val / total_val
         validation_accuracy.append(val_accuracy)
         print(f"Epoch {i+1}/{epochs} - Validation Loss: {avg_val_loss}, Validation Accuracy: {val_accuracy}")
+        torch.cuda.empty_cache()
     
     # Save the model after training
     torch.save(model.state_dict(), model_save_path)
@@ -215,7 +217,7 @@ if training_losses:
     plt.ylabel('Loss')
     plt.legend()
     plt.grid(True)
-    save_path_loss = f"./data/result/loss_evolution.png"
+    save_path_loss = f"./data/result/densenet121_loss_evolution.png"
     plt.savefig(save_path_loss, dpi=300, bbox_inches='tight')
 
 # Accuracy evolution plot
@@ -228,7 +230,7 @@ if training_accuracy:
     plt.ylabel('Accuracy')
     plt.legend()
     plt.grid(True)
-    save_path_accuracy = f"./data/result/accuracy_evolution.png"
+    save_path_accuracy = f"./data/result/densenet121_accuracy_evolution.png"
     plt.savefig(save_path_accuracy, dpi=300, bbox_inches='tight')
 
 # Classification report
@@ -246,7 +248,7 @@ sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', linecolor = 'black', linewidt
 plt.title('Confusion Matrix')
 plt.xlabel('Predicted')
 plt.ylabel('True')
-save_path_confusion_matrix = f"./data/result/confusion_matrix.png"
+save_path_confusion_matrix = f"./data/result/densenet121_confusion_matrix.png"
 plt.savefig(save_path_confusion_matrix, dpi=300, bbox_inches='tight')
 
 # Display some correctly classified samples
@@ -259,7 +261,7 @@ for i, (img, label) in enumerate(correct_samples[:5]):
     axes[i].imshow(img.numpy())
     axes[i].set_title(f"True: {train_dataset.classes[label]}")
     axes[i].axis("off")
-save_path_correctly_classified = f"./data/result/correctly_classified.png"
+save_path_correctly_classified = f"./data/result/densenet121_correctly_classified.png"
 plt.savefig(save_path_correctly_classified, dpi=300, bbox_inches='tight')
 
 # Display some incorrectly classified samples
@@ -272,5 +274,5 @@ for i, (img, label) in enumerate(incorrect_samples[:5]):
     axes[i].imshow(img.numpy())
     axes[i].set_title(f"True: {train_dataset.classes[label]}")
     axes[i].axis("off")
-save_path_incorrectly_classified = f"./data/result/incorrectly_classified.png"
+save_path_incorrectly_classified = f"./data/result/densenet121_incorrectly_classified.png"
 plt.savefig(save_path_incorrectly_classified, dpi=300, bbox_inches='tight')

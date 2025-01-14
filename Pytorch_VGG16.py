@@ -235,7 +235,7 @@ if training_accuracy:
 
 # Classification report
 print("\nClassification Report:\n")
-print(classification_report(all_labels, all_preds))
+print(classification_report(all_labels, all_preds, digits=4, target_names=train_dataset.classes))
 
 # Confusion matrix plot
 cm = confusion_matrix(all_labels, all_preds)

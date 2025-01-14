@@ -100,16 +100,16 @@ if predicted_label == true_label:
         predict_fn,
         top_labels=2,
         hide_color=0,
-        num_samples=1000,  # Number of perturbed samples
+        num_samples=2000,  # Number of perturbed samples
         segmentation_fn=slic_segmentation
     )
 
     # Get the explanation for the predicted class
-    lime_image, mask = explanation.get_image_and_mask(
+    lime_result, mask = explanation.get_image_and_mask(
         label=true_label,
-        positive_only=False,
-        num_features=15,
-        hide_rest=False
+        positive_only=True,
+        num_features=10,
+        hide_rest=True
     )
 
     # Visualize the original image and LIME explanation

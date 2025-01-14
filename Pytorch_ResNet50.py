@@ -217,7 +217,7 @@ if training_losses:
     plt.ylabel('Loss')
     plt.legend()
     plt.grid(True)
-    save_path_loss = f"./data/result/resnet50_loss_evolution.png"
+    save_path_loss = f"./result/resnet50_loss_evolution.png"
     plt.savefig(save_path_loss, dpi=300, bbox_inches='tight')
 
 # Accuracy evolution plot
@@ -230,7 +230,7 @@ if training_accuracy:
     plt.ylabel('Accuracy')
     plt.legend()
     plt.grid(True)
-    save_path_accuracy = f"./data/result/resnet50_accuracy_evolution.png"
+    save_path_accuracy = f"./result/resnet50_accuracy_evolution.png"
     plt.savefig(save_path_accuracy, dpi=300, bbox_inches='tight')
 
 # Classification report
@@ -248,7 +248,7 @@ sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', linecolor = 'black', linewidt
 plt.title('Confusion Matrix')
 plt.xlabel('Predicted')
 plt.ylabel('True')
-save_path_confusion_matrix = f"./data/result/resnet50_confusion_matrix.png"
+save_path_confusion_matrix = f"./result/resnet50_confusion_matrix.png"
 plt.savefig(save_path_confusion_matrix, dpi=300, bbox_inches='tight')
 
 # Display some correctly classified samples
@@ -261,7 +261,7 @@ for i, (img, label) in enumerate(correct_samples[:5]):
     axes[i].imshow(img.numpy())
     axes[i].set_title(f"True: {train_dataset.classes[label]}")
     axes[i].axis("off")
-save_path_correctly_classified = f"./data/result/resnet50_correctly_classified.png"
+save_path_correctly_classified = f"./result/resnet50_correctly_classified.png"
 plt.savefig(save_path_correctly_classified, dpi=300, bbox_inches='tight')
 
 # Display some incorrectly classified samples
@@ -274,5 +274,5 @@ for i, (img, label) in enumerate(incorrect_samples[:5]):
     axes[i].imshow(img.numpy())
     axes[i].set_title(f"True: {train_dataset.classes[label]}")
     axes[i].axis("off")
-save_path_incorrectly_classified = f"./data/result/resnet50_incorrectly_classified.png"
+save_path_incorrectly_classified = f"./result/resnet50_incorrectly_classified.png"
 plt.savefig(save_path_incorrectly_classified, dpi=300, bbox_inches='tight')

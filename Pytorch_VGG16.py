@@ -72,17 +72,17 @@ print(labels.shape)
 class CNNModel(nn.Module):
     def __init__(self):
         super(CNNModel, self).__init__()
-        self.vgg19 = models.vgg19(weights=models.VGG19_Weights.IMAGENET1K_V1)  # Using VGG19
+        self.vgg16 = models.vgg16(weights=models.VGG16_Weights.IMAGENET1K_V1)  # Using VGG16
 
         # Replace the fully connected layer according to our problem
-        in_feats = self.vgg19.classifier[6].in_features
-        self.vgg19.classifier[6] = nn.Linear(in_feats, 2)
+        in_feats = self.vgg16.classifier[6].in_features
+        self.vgg16.classifier[6] = nn.Linear(in_feats, 2)
 
     def forward(self, x):
-        x = self.vgg19(x)
+        x = self.vgg16(x)
         return x
 
-model_save_path = "./model/pytorch_vgg19_model.pth"
+model_save_path = "./model/pytorch_vgg16_model.pth"
 model = CNNModel()
 if os.path.exists(model_save_path):
     model.load_state_dict(torch.load(model_save_path))
@@ -217,7 +217,7 @@ if training_losses:
     plt.ylabel('Loss')
     plt.legend()
     plt.grid(True)
-    save_path_loss = f"./data/result/vgg19_loss_evolution.png"
+    save_path_loss = f"./result/vgg16_loss_evolution.png"
     plt.savefig(save_path_loss, dpi=300, bbox_inches='tight')
 
 # Accuracy evolution plot
@@ -230,7 +230,7 @@ if training_accuracy:
     plt.ylabel('Accuracy')
     plt.legend()
     plt.grid(True)
-    save_path_accuracy = f"./data/result/vgg19_accuracy_evolution.png"
+    save_path_accuracy = f"./result/vgg16_accuracy_evolution.png"
     plt.savefig(save_path_accuracy, dpi=300, bbox_inches='tight')
 
 # Classification report
@@ -248,7 +248,7 @@ sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', linecolor = 'black', linewidt
 plt.title('Confusion Matrix')
 plt.xlabel('Predicted')
 plt.ylabel('True')
-save_path_confusion_matrix = f"./data/result/vgg19_confusion_matrix.png"
+save_path_confusion_matrix = f"./result/vgg16_confusion_matrix.png"
 plt.savefig(save_path_confusion_matrix, dpi=300, bbox_inches='tight')
 
 # Display some correctly classified samples
@@ -261,7 +261,7 @@ for i, (img, label) in enumerate(correct_samples[:5]):
     axes[i].imshow(img.numpy())
     axes[i].set_title(f"True: {train_dataset.classes[label]}")
     axes[i].axis("off")
-save_path_correctly_classified = f"./data/result/vgg19_correctly_classified.png"
+save_path_correctly_classified = f"./result/vgg16_correctly_classified.png"
 plt.savefig(save_path_correctly_classified, dpi=300, bbox_inches='tight')
 
 # Display some incorrectly classified samples
@@ -274,5 +274,5 @@ for i, (img, label) in enumerate(incorrect_samples[:5]):
     axes[i].imshow(img.numpy())
     axes[i].set_title(f"True: {train_dataset.classes[label]}")
     axes[i].axis("off")
-save_path_incorrectly_classified = f"./data/result/vgg19_incorrectly_classified.png"
+save_path_incorrectly_classified = f"./result/vgg16_incorrectly_classified.png"
 plt.savefig(save_path_incorrectly_classified, dpi=300, bbox_inches='tight')

@@ -40,10 +40,14 @@ with st.container():
             st.header("Model Performance Metrics")
             st.markdown(
                 f"""
-                - **Accuracy**: {accuracy:.2%}
-                - **Precision**: {precision:.2%}
-                - **Recall**: {recall:.2%}
-                - **F1 Score**: {f1:.2%}
+                - **Accuracy**: {accuracy:.2%} 
+                    - Accuracy represents the overall correctness of the model. It is the ratio of correctly predicted cases (both positive and negative) to the total number of cases.
+                - **Precision**: {precision:.2%} 
+                    - Precision measures the proportion of true positive predictions among all positive predictions. It answers the question: "Of all the images the model labeled as pneumonia, how many were correct?"
+                - **Recall**: {recall:.2%} 
+                    - Recall measures the proportion of true positive predictions among all actual positive cases. It answers the question: "Of all the actual pneumonia cases, how many did the model correctly identify?"
+                - **F1 Score**: {f1:.2%} 
+                    - The F1 Score is the harmonic mean of precision and recall, providing a balance between the two. It is useful when there is an uneven class distribution.
                 """
             )
 
@@ -71,7 +75,19 @@ with st.container():
             if os.path.exists(gradcam_save_path):
                 st.subheader("Features that contribute to the prediction")
                 st.image(gradcam_save_path, caption="Grad-CAM Visualization", use_container_width=True)
+                st.markdown(
+                    """
+                    **Grad-CAM** highlights the regions of the image that are most important for the model's prediction.
+                    Warmer colors (red, orange) indicate areas that strongly influenced the prediction, while cooler colors (blue) indicate less influential regions.
+                    """
+                )
 
             if os.path.exists(lime_save_path):
                 st.subheader(f"Key regions that indicate the presence of {predicted_class}")
                 st.image(lime_save_path, caption="LIME Visualization", use_container_width=True)
+                st.markdown(
+                    f"""
+                    **LIME (Local Interpretable Model-agnostic Explanations)** provides insights into the areas of the image that contributed to the model's prediction.
+                    It identifies specific segments or superpixels that were most significant in classifying the image as {predicted_class}.
+                    """
+                )
